@@ -5,7 +5,7 @@ resource "aws_instance" "app_server" {
   subnet_id       = aws_subnet.main_a.id
   security_groups = [aws_security_group.web_sg.id]
   tags = {
-    Name = "Jenkins"
+    Name = "JenkinsController"
   }
 
   connection {
