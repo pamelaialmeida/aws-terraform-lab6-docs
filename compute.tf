@@ -7,6 +7,31 @@ resource "aws_instance" "web1" {
   tags = {
     Name = "Production_Env1"
   }
+  
+  connection {
+    type        = "ssh"
+    host        = self.public_ip
+    user        = "ec2-user"
+    private_key = tls_private_key.jkey.private_key_pem
+  }
+
+  provisioner "local-exec" {
+    command = "chmod +x ./getkey.sh && ./getkey.sh"
+  }
+
+  provisioner "file" {
+    source      = "index1.html"
+    destination = "/tmp/index1.html"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo dnf install -y httpd",
+      "sudo systemctl start httpd",
+	  "sudo systemctl enable httpd",
+	  "sudo mv /tmp/index1.html /var/www/html/index.html"
+    ]
+  }
 }
 
 resource "aws_instance" "web2" {
@@ -17,6 +42,31 @@ resource "aws_instance" "web2" {
   key_name      = aws_key_pair.secret_key.key_name
   tags = {
     Name = "Production_Env2"
+  }
+  
+    connection {
+    type        = "ssh"
+    host        = self.public_ip
+    user        = "ec2-user"
+    private_key = tls_private_key.jkey.private_key_pem
+  }
+
+  provisioner "local-exec" {
+    command = "chmod +x ./getkey.sh && ./getkey.sh"
+  }
+
+  provisioner "file" {
+    source      = "index2.html"
+    destination = "/tmp/index2.html"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo dnf install -y httpd",
+      "sudo systemctl start httpd",
+	  "sudo systemctl enable httpd",
+	  "sudo mv /tmp/index2.html /var/www/html/index.html"
+    ]
   }
 }
 
